@@ -28,6 +28,8 @@ cmd* cmd_create(const char* name, unsigned int mode) {
     c->case_sensetive = COMPARE_CASE_INSENSETIVE;
     c->callback       = NULL;
     c->description    = NULL;
+    c->composite      = CMD_SIMPLE;
+    c->cmdList        = NULL;
     c->next           = NULL;
 
     return c;
@@ -60,6 +62,8 @@ cmd* cmd_copy(cmd* c) {
     nc->case_sensetive = c->case_sensetive;
     nc->callback       = c->callback;
     nc->description    = c->description;
+    nc->composite      = c->composite;
+    nc->cmdList        = NULL;
     nc->next           = NULL;
 
     return nc;
@@ -85,6 +89,8 @@ cmd* cmd_move(cmd* c) {
     nc->case_sensetive = c->case_sensetive;
     nc->callback       = c->callback;
     nc->description    = c->description;
+    nc->composite      = c->composite;
+    nc->cmdList        = NULL;
     nc->next           = NULL;
 
     return nc;

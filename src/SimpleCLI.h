@@ -42,7 +42,7 @@ class SimpleCLI {
 
         void parse(const String& input);
         void parse(const char* input);
-        void parse(const char* input, size_t input_len);
+        void parse(const char* input, size_t input_len, cmd* commands = NULL);
 
         bool available() const;
         bool errored() const;
@@ -64,10 +64,12 @@ class SimpleCLI {
         Command addCmd(const char* name, void (* callback)(cmd* c)          = NULL);
         Command addBoundlessCmd(const char* name, void (* callback)(cmd* c) = NULL);
         Command addSingleArgCmd(const char* name, void (* callback)(cmd* c) = NULL);
+        Command addCompositeCmd(const char* name);
 
         Command addCommand(const char* name, void (* callback)(cmd* c)               = NULL);
         Command addBoundlessCommand(const char* name, void (* callback)(cmd* c)      = NULL);
         Command addSingleArgumentCommand(const char* name, void (* callback)(cmd* c) = NULL);
+        Command addCompositeCommand(const char* name);
 
         String toString(bool descriptions          = true) const;
         void toString(String& s, bool descriptions = true) const;

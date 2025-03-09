@@ -83,6 +83,14 @@ void Command::setDescription(const char* description) {
     cmd_set_description(cmdPointer, description);
 }
 
+bool Command::setComposite(bool composite) {
+    if (cmdPointer) {
+        cmdPointer->composite = composite;
+        return true;
+    }
+    return false;
+}
+
 Argument Command::addArg(const char* name, const char* defaultValue) {
     if (cmdPointer && (cmdPointer->mode == CMD_DEFAULT)) {
         arg* a = arg_create_opt(name, defaultValue);
@@ -303,4 +311,59 @@ void Command::run() const {
 
 cmd* Command::getPtr() {
     return cmdPointer;
+}
+
+void Command::addCmd(Command& c) {
+    if (!cmdPointer || !cmdPointer->composite) return;
+
+    if (!cmdPointer->cmdList) {
+        cmdPointer->cmdList = c.cmdPointer;
+    } else {
+        cmd* h = cmdPointer->cmdList;
+
+        while (h->next) h = h->next;
+        h->next = c.cmdPointer;
+    }
+
+    c.setCaseSensetive(cmdPointer->case_sensetive);
+    c.persistent = true;
+}
+
+Command Command::addCmd(const char* name, void (* callback)(cmd* c)) {
+    Command c(cmd_create_default(name));
+
+    c.setCallback(callback);
+    addCmd(c);
+
+    return c;
+}
+
+Command Command::addBoundlessCmd(const char* name, void (* callback)(cmd* c)) {
+    Command c(cmd_create_boundless(name));
+
+    c.setCallback(callback);
+    addCmd(c);
+
+    return c;
+}
+
+Command Command::addSingleArgCmd(const char* name, void (* callback)(cmd* c)) {
+    Command c(cmd_create_single(name));
+
+    c.setCallback(callback);
+    addCmd(c);
+
+    return c;
+}
+
+Command Command::addCommand(const char* name, void (* callback)(cmd* c)) {
+    return addCmd(name, callback);
+}
+
+Command Command::addBoundlessCommand(const char* name, void (* callback)(cmd* c)) {
+    return addBoundlessCmd(name, callback);
+}
+
+Command Command::addSingleArgumentCommand(const char* name, void (* callback)(cmd* c)) {
+    return addSingleArgCmd(name, callback);
 }

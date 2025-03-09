@@ -63,7 +63,7 @@ void SimpleCLI::parse(const char* input) {
     if (input) parse(input, strlen(input));
 }
 
-void SimpleCLI::parse(const char* str, size_t len) {
+void SimpleCLI::parse(const char* str, size_t len, cmd* commands) {
     // Split str into a list of lines
     line_list* l = parse_lines(str, len);
 
@@ -71,7 +71,9 @@ void SimpleCLI::parse(const char* str, size_t len) {
     line_node* n = l->first;
 
     while (n) {
-        cmd* h       = cmdList;
+        cmd* h;
+        if (commands) h = commands;
+        else          h = cmdList;
         bool success = false;
         bool errored = false;
 
@@ -80,7 +82,14 @@ void SimpleCLI::parse(const char* str, size_t len) {
 
             // When parsing was successful
             if (e->mode == CMD_PARSE_SUCCESS) {
-                if (h->callback && !pauseParsing) h->callback(h);
+                if (h->composite) {
+                    parse(
+                        n->words->first->next->str,
+                        n->len - n->words->first->len - 1,
+                        h->cmdList
+                    );
+                }
+                else if (h->callback && !pauseParsing) h->callback(h);
                 else cmdQueue = cmd_push(cmdQueue, cmd_copy(h), commandQueueSize);
 
                 success = true;
@@ -101,7 +110,7 @@ void SimpleCLI::parse(const char* str, size_t len) {
 
             /*else (e->mode <= CMD_NOT_FOUND) {
 
-               }*/
+            }*/
 
             cmd_error_destroy(e);
 
@@ -269,6 +278,15 @@ Command SimpleCLI::addSingleArgCmd(const char* name, void (* callback)(cmd* c)) 
     return c;
 }
 
+Command SimpleCLI::addCompositeCmd(const char* name) {
+    Command c(cmd_create_boundless(name));
+
+    c.setComposite(true);
+    addCmd(c);
+
+    return c;
+}
+
 Command SimpleCLI::addCommand(const char* name, void (* callback)(cmd* c)) {
     return addCmd(name, callback);
 }
@@ -279,6 +297,10 @@ Command SimpleCLI::addBoundlessCommand(const char* name, void (* callback)(cmd* 
 
 Command SimpleCLI::addSingleArgumentCommand(const char* name, void (* callback)(cmd* c)) {
     return addSingleArgCmd(name, callback);
+}
+
+Command SimpleCLI::addCompositeCommand(const char* name) {
+    return addCompositeCmd(name);
 }
 
 String SimpleCLI::toString(bool descriptions) const {

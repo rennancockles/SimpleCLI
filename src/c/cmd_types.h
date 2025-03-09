@@ -19,6 +19,9 @@
 #define CMD_CASE_INSENSETIVE 0
 #define CMD_CASE_SENSETIVE 1
 
+#define CMD_SIMPLE 0
+#define CMD_COMPOSITE 1
+
 typedef struct cmd {
     const char * name;
     unsigned int mode : 2;
@@ -26,6 +29,8 @@ typedef struct cmd {
     unsigned int case_sensetive : 1;
     void (* callback)(struct cmd* c);
     const char* description;
+    unsigned int composite : 1;
+    struct cmd* cmdList;
     struct cmd* next;
 } cmd;
 
