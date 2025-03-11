@@ -86,10 +86,11 @@ void SimpleCLI::parse(const char* str, size_t len, cmd* commands) {
                     parse(
                         n->words->first->next->str,
                         n->len - n->words->first->len - 1,
-                        h->cmdList
+                        h->cmd_list
                     );
                 }
-                else if (h->callback && !pauseParsing) h->callback(h);
+
+                if (h->callback && !pauseParsing) h->callback(h);
                 else cmdQueue = cmd_push(cmdQueue, cmd_copy(h), commandQueueSize);
 
                 success = true;
@@ -278,10 +279,11 @@ Command SimpleCLI::addSingleArgCmd(const char* name, void (* callback)(cmd* c)) 
     return c;
 }
 
-Command SimpleCLI::addCompositeCmd(const char* name) {
+Command SimpleCLI::addCompositeCmd(const char* name, void (* callback)(cmd* c)) {
     Command c(cmd_create_boundless(name));
 
     c.setComposite(true);
+    c.setCallback(callback);
     addCmd(c);
 
     return c;
@@ -299,8 +301,8 @@ Command SimpleCLI::addSingleArgumentCommand(const char* name, void (* callback)(
     return addSingleArgCmd(name, callback);
 }
 
-Command SimpleCLI::addCompositeCommand(const char* name) {
-    return addCompositeCmd(name);
+Command SimpleCLI::addCompositeCommand(const char* name, void (* callback)(cmd* c)) {
+    return addCompositeCmd(name, callback);
 }
 
 String SimpleCLI::toString(bool descriptions) const {

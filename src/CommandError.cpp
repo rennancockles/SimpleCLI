@@ -100,6 +100,7 @@ CommandErrorType CommandError::getType() const {
             case CMD_MISSING_ARG: return CommandErrorType::MISSING_ARGUMENT;
             case CMD_MISSING_ARG_VALUE: return CommandErrorType::MISSING_ARGUMENT_VALUE;
             case CMD_UNCLOSED_QUOTE: return CommandErrorType::UNCLOSED_QUOTE;
+            case CMD_MISSING_SUB_CMD: return CommandErrorType::MISSING_SUB_COMMAND;
         }
     }
     return CommandErrorType::PARSE_SUCCESSFUL;
@@ -137,6 +138,7 @@ String CommandError::getMessage() const {
             case CMD_MISSING_ARG: return String(F("Missing argument"));
             case CMD_MISSING_ARG_VALUE: return String(F("Missing argument value"));
             case CMD_UNCLOSED_QUOTE: return String(F("Unclosed quote"));
+            case CMD_MISSING_SUB_CMD: return String(F("Missing subcommand"));
         }
     }
     return String();

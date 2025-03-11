@@ -19,7 +19,7 @@ extern "C" {
 
 enum class CommandErrorType { NULL_POINTER, EMPTY_LINE, PARSE_SUCCESSFUL,
                               COMMAND_NOT_FOUND, UNKNOWN_ARGUMENT, MISSING_ARGUMENT,
-                              MISSING_ARGUMENT_VALUE, UNCLOSED_QUOTE };
+                              MISSING_ARGUMENT_VALUE, UNCLOSED_QUOTE, MISSING_SUB_COMMAND };
 
 class CommandError {
     private:

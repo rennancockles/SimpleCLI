@@ -37,6 +37,10 @@ cmd_error* cmd_error_create_empty_line(cmd* c) {
     return cmd_error_create(CMD_EMPTY_LINE, c, NULL, NULL);
 }
 
+cmd_error* cmd_error_create_missing_sub_cmd(cmd* c) {
+    return cmd_error_create(CMD_MISSING_SUB_CMD, c, NULL, NULL);
+}
+
 cmd_error* cmd_error_create_parse_success(cmd* c) {
     return cmd_error_create(CMD_PARSE_SUCCESS, c, NULL, NULL);
 }

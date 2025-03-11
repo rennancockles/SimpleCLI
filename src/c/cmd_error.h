@@ -15,6 +15,7 @@
 cmd_error* cmd_error_create(int mode, cmd* command, arg* argument, word_node* data);
 cmd_error* cmd_error_create_null_ptr(cmd* c);
 cmd_error* cmd_error_create_empty_line(cmd* c);
+cmd_error* cmd_error_create_missing_sub_cmd(cmd* c);
 cmd_error* cmd_error_create_parse_success(cmd* c);
 cmd_error* cmd_error_create_not_found(cmd* c, word_node* cmd_name);
 cmd_error* cmd_error_create_unknown_arg(cmd* c, word_node* arg_name);

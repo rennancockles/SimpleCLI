@@ -18,6 +18,7 @@
 #define CMD_MISSING_ARG 3
 #define CMD_MISSING_ARG_VALUE 4
 #define CMD_UNCLOSED_QUOTE 5
+#define CMD_MISSING_SUB_CMD 6
 
 typedef struct cmd_error {
     int               mode;

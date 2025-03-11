@@ -30,7 +30,7 @@ typedef struct cmd {
     void (* callback)(struct cmd* c);
     const char* description;
     unsigned int composite : 1;
-    struct cmd* cmdList;
+    struct cmd* cmd_list;
     struct cmd* next;
 } cmd;
 

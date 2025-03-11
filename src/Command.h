@@ -93,10 +93,12 @@ class Command {
         Command addCmd(const char* name, void (* callback)(cmd* c)          = NULL);
         Command addBoundlessCmd(const char* name, void (* callback)(cmd* c) = NULL);
         Command addSingleArgCmd(const char* name, void (* callback)(cmd* c) = NULL);
+        Command addCompositeCmd(const char* name, void (* callback)(cmd* c) = NULL);
 
         Command addCommand(const char* name, void (* callback)(cmd* c)               = NULL);
         Command addBoundlessCommand(const char* name, void (* callback)(cmd* c)      = NULL);
         Command addSingleArgumentCommand(const char* name, void (* callback)(cmd* c) = NULL);
+        Command addCompositeCommand(const char* name, void (* callback)(cmd* c) = NULL);
 };
 
 #endif /* ifndef Command_h */

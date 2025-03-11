@@ -11,48 +11,51 @@ Add commands to your project without hassle.<br>
 <a href='https://ko-fi.com/G2G75FA4V' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 </p>
 
-![Cowsay command example](img/cowsay.gif)  
+![Cowsay command example](img/cowsay.gif)
 
 ## Projects
-A list of projects that make use of this library:  
+A list of projects that make use of this library:
 - [Control ESP32 with Command Line Interface Over the Internet](https://www.hackster.io/donowak/control-esp32-with-command-line-interface-over-the-internet-fa9634)
 - [WiFiDuck](https://github.com/spacehuhn/WiFiDuck)
 - [ESP8266 Deauther V3](https://github.com/SpacehuhnTech/esp8266_deauther/tree/v3)
 
 ## Overview
 
-- [About](#about)
-- [Supported Devices](#supported-devices)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Examples](#examples)
-  - [Include Library](#include-library)
-  - [Create SimpleCLI instance](#create-simplecli-instance)
-  - [Adding Commands](#adding-commands)
-  - [Adding Commands with callback](#adding-commands-with-callback)
-  - [Adding Arguments](#adding-arguments)
-  - [Templates](#templates)
-  - [Parsing Input](#parsing-input)
-  - [Reacting on Commands](#reacting-on-commands)
-  - [Reacting on Errors](#reacting-on-errors)
-- [Classes & Methods](#classes--methods)
-  - [SimpleCLI](#simplecli)
-  - [CommandType](#commandtype)
-  - [Command](#command)
-  - [CommandErrorType](#commanderrortype)
-  - [CommandError](#commanderror)
-  - [ArgumentType](#argumenttype)
-  - [Argument](#argument)
-- [License](#license)
+- [SimpleCLI](#simplecli)
+  - [Projects](#projects)
+  - [Overview](#overview)
+  - [About](#about)
+  - [Supported Devices](#supported-devices)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Examples](#examples)
+    - [Include Library](#include-library)
+    - [Create SimpleCLI instance](#create-simplecli-instance)
+    - [Adding Commands](#adding-commands)
+    - [Adding Commands with callback](#adding-commands-with-callback)
+    - [Adding Arguments](#adding-arguments)
+    - [Templates](#templates)
+    - [Parsing Input](#parsing-input)
+    - [Reacting on Commands](#reacting-on-commands)
+    - [Reacting on Errors](#reacting-on-errors)
+  - [Classes \& Methods](#classes--methods)
+    - [SimpleCLI](#simplecli-1)
+    - [CommandType](#commandtype)
+    - [Command](#command)
+    - [CommandErrorType](#commanderrortype)
+    - [CommandError](#commanderror)
+    - [ArgumentType](#argumenttype)
+    - [Argument](#argument)
+  - [License](#license)
 
 ## About
-The goal of this library is to control your Arduino projects using commands similar to the Linux CLI.  
-Because parsing and validating strings in C/C++ can be quite a pain, this library aims to simplify the process as much as possible.  
+The goal of this library is to control your Arduino projects using commands similar to the Linux CLI.
+Because parsing and validating strings in C/C++ can be quite a pain, this library aims to simplify the process as much as possible.
 
 ## Supported Devices
-Strings take up a good amount of memory, so **it's strongly recommended to chose a development board with at least 32 KB RAM**.  
-It doesn't make much sense to run this library on an Uno or Nano, because it will quickly take up a most of the resources.  
-Here's a list of tested hardware (feel free to contribute by making a Pull-Request):  
+Strings take up a good amount of memory, so **it's strongly recommended to chose a development board with at least 32 KB RAM**.
+It doesn't make much sense to run this library on an Uno or Nano, because it will quickly take up a most of the resources.
+Here's a list of tested hardware (feel free to contribute by making a Pull-Request):
 
 | Chipset | Board(s) | Flash | RAM | Support |
 | ------- | -------- | ----- | --- | ------- |
@@ -68,10 +71,10 @@ Here's a list of tested hardware (feel free to contribute by making a Pull-Reque
 
 ## Installation
 
-1) Click [Download Zip](https://github.com/spacehuhn/SimpleCLI/archive/master.zip) to download the source code from GitHub.  
-2) Unzip and rename the Folder name to "SimpleCLI".  
-3) Paste it in your library folder (usually located somewhere at documents/Arduino/libraries).  
-4) Restart the Arduino IDE.  
+1) Click [Download Zip](https://github.com/spacehuhn/SimpleCLI/archive/master.zip) to download the source code from GitHub.
+2) Unzip and rename the Folder name to "SimpleCLI".
+3) Paste it in your library folder (usually located somewhere at documents/Arduino/libraries).
+4) Restart the Arduino IDE.
 
 ## Usage
 
@@ -79,10 +82,10 @@ Here's a list of tested hardware (feel free to contribute by making a Pull-Reque
 
 ### Examples
 
-Please check out the [example sketches](https://github.com/spacehuhn/SimpleCLI/tree/master/examples/), it's the quickest way to understand how this library works.  
-The following sections are for reference.  
+Please check out the [example sketches](https://github.com/spacehuhn/SimpleCLI/tree/master/examples/), it's the quickest way to understand how this library works.
+The following sections are for reference.
 
-![Ping with arguments command example](img/ping.gif)  
+![Ping with arguments command example](img/ping.gif)
 
 ### Include Library
 
@@ -98,14 +101,14 @@ SimpleCLI cli;
 SimpleCLI cli(COMMAND_QUEUE_SIZE, ERROR_QUEUE_SIZE);
 ```
 
-`COMMAND_QUEUE_SIZE` and `ERROR_QUEUE_SIZE` are `int`s set to 10 commands and 10 errors by default.  
-The oldest command or error will be deleted automatically if the queue gets full.  
-You can most likely ignore the queue sizes, as those are just a safety mechanism and won't be important for most use cases.  
+`COMMAND_QUEUE_SIZE` and `ERROR_QUEUE_SIZE` are `int`s set to 10 commands and 10 errors by default.
+The oldest command or error will be deleted automatically if the queue gets full.
+You can most likely ignore the queue sizes, as those are just a safety mechanism and won't be important for most use cases.
 
 ### Adding Commands
 
-Command names should only contain upper-, lowercase letters and numbers!  
-Recommended are names with only lowercase letters and no numbers.  
+Command names should only contain upper-, lowercase letters and numbers!
+Recommended are names with only lowercase letters and no numbers.
 
 ```c++
 // Normal command with a defined number of arguments
@@ -128,8 +131,8 @@ Command myBoundlessCmd = cli.addBoundlessCmd("myBoundlessCmdName");
 
 ### Adding Commands with callback
 
-Sometimes it's useful to give the command a callback function that will be executed automatically when the command was entered.  
-You must define these callback functions as a global void function with a `cmd` pointer as shown here:  
+Sometimes it's useful to give the command a callback function that will be executed automatically when the command was entered.
+You must define these callback functions as a global void function with a `cmd` pointer as shown here:
 ```c++
 void myCallback(cmd* commandPointer) {
   Command cmd(commandPointer); // Create wrapper class instance for the pointer
@@ -137,7 +140,7 @@ void myCallback(cmd* commandPointer) {
 }
 ```
 
-Now you can create a command and pass it the function pointer:  
+Now you can create a command and pass it the function pointer:
 ```c++
 Command myCommand = cli.addCommand("myCommandName", myCallback);
 Command myCommand = cli.addBoundlessCommand("myCommandName", myCallback);
@@ -150,7 +153,7 @@ Command myCommand = cli.addSingleArgCmd("myCommandName", myCallback);
 
 ### Adding Arguments
 
-Keep in mind that you can only add arguments to `Command`s and **not** to `SingleArgumentCommand`s and `BoundlessCommand`s.  
+Keep in mind that you can only add arguments to `Command`s and **not** to `SingleArgumentCommand`s and `BoundlessCommand`s.
 
 ```c++
 // myCommandName -argumentName "argumentValue"
@@ -187,16 +190,16 @@ Argument myArg = myCommand.addFlagArg("argumentName");
 
 ### Templates
 
-With this neat feature, you can give commands and arguments multiple names.  
-- A comma (`,`) separates multiple names.  
-- A forward slash (`/`) declares everything after it optional (until the next comma, or the end of the string).  
+With this neat feature, you can give commands and arguments multiple names.
+- A comma (`,`) separates multiple names.
+- A forward slash (`/`) declares everything after it optional (until the next comma, or the end of the string).
 
-You can combine them together.  
+You can combine them together.
 
-**This means a command or argument name should not use `,` and `/` as a part of the regular name!**  
-These characters will always be interpreted as a separator.  
+**This means a command or argument name should not use `,` and `/` as a part of the regular name!**
+These characters will always be interpreted as a separator.
 
-Here are some examples:  
+Here are some examples:
 
 | Name-String | Results |
 | ----------- | ------- |
@@ -224,8 +227,8 @@ cli.parse(input);
 
 ### Reacting on Commands
 
-Be aware that this is only necessary if you have commands that do not have a callback function.  
-Callbacks will be run automatically and the command will not wait in the queue.  
+Be aware that this is only necessary if you have commands that do not have a callback function.
+Callbacks will be run automatically and the command will not wait in the queue.
 ```c++
 // First check if a newly parsed command is available
 if(cli.available()) {
@@ -259,7 +262,7 @@ if(cli.errored()) {
 }
 ```
 
-You can also make a error callback function, like this one:  
+You can also make a error callback function, like this one:
 
 ```c++
 void errorCallback(cmd_error* e) {
@@ -278,7 +281,7 @@ void errorCallback(cmd_error* e) {
 }
 ```
 
-Just don't forget to add the error callback function to the SimpleCLI instance:  
+Just don't forget to add the error callback function to the SimpleCLI instance:
 
 ```c++
 cli.setOnError(errorCallback);
@@ -286,7 +289,7 @@ cli.setOnError(errorCallback);
 
 ## Classes & Methods
 
-Here is a plain overview of all classes and their methods:  
+Here is a plain overview of all classes and their methods:
 
 ### SimpleCLI
 
@@ -405,7 +408,7 @@ cmd* getPtr();
 ```c++
 enum class CommandErrorType { NULL_POINTER, EMPTY_LINE, PARSE_SUCCESSFUL,
                               COMMAND_NOT_FOUND, UNKNOWN_ARGUMENT, MISSING_ARGUMENT,
-                              MISSING_ARGUMENT_VALUE, UNCLOSED_QUOTE };
+                              MISSING_ARGUMENT_VALUE, UNCLOSED_QUOTE, MISSING_SUB_COMMAND };
 ```
 
 ### CommandError
@@ -498,4 +501,4 @@ arg* getPtr();
 
 ## License
 
-This software is licensed under the MIT License. See the [license file](LICENSE) for details.  
+This software is licensed under the MIT License. See the [license file](LICENSE) for details.

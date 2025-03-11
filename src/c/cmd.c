@@ -29,7 +29,7 @@ cmd* cmd_create(const char* name, unsigned int mode) {
     c->callback       = NULL;
     c->description    = NULL;
     c->composite      = CMD_SIMPLE;
-    c->cmdList        = NULL;
+    c->cmd_list        = NULL;
     c->next           = NULL;
 
     return c;
@@ -63,7 +63,7 @@ cmd* cmd_copy(cmd* c) {
     nc->callback       = c->callback;
     nc->description    = c->description;
     nc->composite      = c->composite;
-    nc->cmdList        = NULL;
+    nc->cmd_list        = NULL;
     nc->next           = NULL;
 
     return nc;
@@ -90,7 +90,7 @@ cmd* cmd_move(cmd* c) {
     nc->callback       = c->callback;
     nc->description    = c->description;
     nc->composite      = c->composite;
-    nc->cmdList        = NULL;
+    nc->cmd_list        = NULL;
     nc->next           = NULL;
 
     return nc;
@@ -211,6 +211,26 @@ cmd_error* cmd_parse(cmd* c, line_node* n) {
 
     // Check if name equals command name
     if (compare(cmd_name->str, cmd_name->len, c->name, c->case_sensetive) == COMPARE_UNEQUAL) return cmd_error_create_not_found(c, cmd_name);
+
+    // When command boundless, set all words as anonymous args
+    if (c->composite) {
+        // Look for sub command which matches the word name
+        word_node* w = first_arg;
+        cmd* _c      = c->cmd_list;
+
+        if (!w) return cmd_error_create_missing_sub_cmd(c);
+
+        while (_c) {
+            if (compare(w->str, w->len, _c->name, c->case_sensetive) == COMPARE_EQUAL) break;
+            _c = _c->next;
+        }
+
+        // No matching sub command found
+        if (!_c) {
+            cmd_name->len += w->len + 1;
+            return cmd_error_create_not_found(c, cmd_name);
+        }
+    }
 
     // When command boundless, set all words as anonymous args
     if (c->mode == CMD_BOUNDLESS) {

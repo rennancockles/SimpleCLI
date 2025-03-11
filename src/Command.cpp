@@ -282,7 +282,10 @@ void Command::toString(String& s, bool description) const {
     if (cmdPointer) {
         s += String(cmdPointer->name);
 
-        if (cmdPointer->mode == CMD_BOUNDLESS) {
+        if (cmdPointer->composite) {
+            s += ' ';
+            s += "<subcommand> <value> ...";
+        } else if (cmdPointer->mode == CMD_BOUNDLESS) {
             s += ' ';
             s += "<value> <value> ...";
         } else if (cmdPointer->mode == CMD_SINGLE) {
@@ -316,10 +319,10 @@ cmd* Command::getPtr() {
 void Command::addCmd(Command& c) {
     if (!cmdPointer || !cmdPointer->composite) return;
 
-    if (!cmdPointer->cmdList) {
-        cmdPointer->cmdList = c.cmdPointer;
+    if (!cmdPointer->cmd_list) {
+        cmdPointer->cmd_list = c.cmdPointer;
     } else {
-        cmd* h = cmdPointer->cmdList;
+        cmd* h = cmdPointer->cmd_list;
 
         while (h->next) h = h->next;
         h->next = c.cmdPointer;
@@ -356,6 +359,16 @@ Command Command::addSingleArgCmd(const char* name, void (* callback)(cmd* c)) {
     return c;
 }
 
+Command Command::addCompositeCmd(const char* name, void (* callback)(cmd* c)) {
+    Command c(cmd_create_boundless(name));
+
+    c.setComposite(true);
+    c.setCallback(callback);
+    addCmd(c);
+
+    return c;
+}
+
 Command Command::addCommand(const char* name, void (* callback)(cmd* c)) {
     return addCmd(name, callback);
 }
@@ -366,4 +379,8 @@ Command Command::addBoundlessCommand(const char* name, void (* callback)(cmd* c)
 
 Command Command::addSingleArgumentCommand(const char* name, void (* callback)(cmd* c)) {
     return addSingleArgCmd(name, callback);
+}
+
+Command Command::addCompositeCommand(const char* name, void (* callback)(cmd* c)) {
+    return addCompositeCmd(name, callback);
 }
