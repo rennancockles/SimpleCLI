@@ -15,69 +15,69 @@
 #define SIMPLECLI_VERSION_REVISION 3
 
 class SimpleCLI {
-    private:
-        bool caseSensetive { false };
-        bool pauseParsing { false };
+private:
+    bool caseSensetive{false};
+    bool pauseParsing{false};
 
-        cmd* cmdList { NULL };          // List of accessible commands
-        cmd* cmdQueue { NULL };         // Queue with parsed commands the user has typed in
-        cmd_error* errorQueue { NULL }; // Queue with parser errors
+    cmd *cmdList{NULL};          // List of accessible commands
+    cmd *cmdQueue{NULL};         // Queue with parsed commands the user has typed in
+    cmd_error *errorQueue{NULL}; // Queue with parser errors
 
-        int commandQueueSize;
-        int errorQueueSize;
+    int commandQueueSize;
+    int errorQueueSize;
 
-        void (* onError)(cmd_error* e) = NULL;
+    void (*onError)(cmd_error *e) = NULL;
 
-        cmd* getNextCmd(cmd* begin, const char* name, size_t name_len);
-        void parseLine(const char* input, size_t input_len);
+    cmd *getNextCmd(cmd *begin, const char *name, size_t name_len);
+    void parseLine(const char *input, size_t input_len);
 
-        void addCmd(Command& c);
+    void addCmd(Command &c);
 
-    public:
-        SimpleCLI(int commandQueueSize = 10, int errorQueueSize = 10);
-        ~SimpleCLI();
+public:
+    SimpleCLI(int commandQueueSize = 10, int errorQueueSize = 10);
+    ~SimpleCLI();
 
-        void pause();
-        void unpause();
+    void pause();
+    void unpause();
 
-        void parse(const String& input);
-        void parse(const char* input);
-        void parse(const char* input, size_t input_len, cmd* commands = NULL);
+    bool parse(const String &input);
+    bool parse(const char *input);
+    bool parse(const char *input, size_t input_len, cmd *commands = NULL);
 
-        bool available() const;
-        bool errored() const;
-        bool paused() const;
+    bool available() const;
+    bool errored() const;
+    bool paused() const;
 
-        int countCmdQueue() const;
-        int countErrorQueue() const;
+    int countCmdQueue() const;
+    int countErrorQueue() const;
 
-        Command getCmd();
-        Command getCmd(String name);
-        Command getCmd(const char* name);
+    Command getCmd();
+    Command getCmd(String name);
+    Command getCmd(const char *name);
 
-        Command getCommand();
-        Command getCommand(String name);
-        Command getCommand(const char* name);
+    Command getCommand();
+    Command getCommand(String name);
+    Command getCommand(const char *name);
 
-        CommandError getError();
+    CommandError getError();
 
-        Command addCmd(const char* name, void (* callback)(cmd* c)          = NULL);
-        Command addBoundlessCmd(const char* name, void (* callback)(cmd* c) = NULL);
-        Command addSingleArgCmd(const char* name, void (* callback)(cmd* c) = NULL);
-        Command addCompositeCmd(const char* name, void (* callback)(cmd* c) = NULL);
+    Command addCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+    Command addBoundlessCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+    Command addSingleArgCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+    Command addCompositeCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
 
-        Command addCommand(const char* name, void (* callback)(cmd* c)               = NULL);
-        Command addBoundlessCommand(const char* name, void (* callback)(cmd* c)      = NULL);
-        Command addSingleArgumentCommand(const char* name, void (* callback)(cmd* c) = NULL);
-        Command addCompositeCommand(const char* name, void (* callback)(cmd* c) = NULL);
+    Command addCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+    Command addBoundlessCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+    Command addSingleArgumentCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+    Command addCompositeCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
 
-        String toString(bool descriptions          = true) const;
-        void toString(String& s, bool descriptions = true) const;
+    String toString(bool descriptions = true) const;
+    void toString(String &s, bool descriptions = true) const;
 
-        void setCaseSensetive(bool caseSensetive = true);
-        void setCaseSensitive(bool caseSensitive = true);
-        void setOnError(void (* onError)(cmd_error* e));
-        void setErrorCallback(void (* onError)(cmd_error* e));
+    void setCaseSensetive(bool caseSensetive = true);
+    void setCaseSensitive(bool caseSensitive = true);
+    void setOnError(void (*onError)(cmd_error *e));
+    void setErrorCallback(void (*onError)(cmd_error *e));
 };
 
 #endif // ifndef SimpleCLI_h

@@ -23,15 +23,15 @@
 #define CMD_COMPOSITE 1
 
 typedef struct cmd {
-    const char * name;
+    const char *name;
     unsigned int mode : 2;
-    struct arg * arg_list;
+    struct arg *arg_list;
     unsigned int case_sensetive : 1;
-    void (* callback)(struct cmd* c);
-    const char* description;
+    unsigned int (*callback)(struct cmd *c);
+    const char *description;
     unsigned int composite : 1;
-    struct cmd* cmd_list;
-    struct cmd* next;
+    struct cmd *cmd_list;
+    struct cmd *next;
 } cmd;
 
 #endif /* ifndef cmd_types_h */

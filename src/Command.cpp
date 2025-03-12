@@ -7,23 +7,23 @@
 #include "Command.h"
 
 extern "C" {
-#include "c/cmd.h"
 #include "c/arg.h"
+#include "c/cmd.h"
 }
 
-Command::Command(cmd* cmdPointer, bool persistent) : cmdPointer(cmdPointer), persistent(persistent) {
+Command::Command(cmd *cmdPointer, bool persistent) : cmdPointer(cmdPointer), persistent(persistent) {
     if (!persistent) this->cmdPointer = cmd_copy(cmdPointer);
 }
 
-Command::Command(const Command& c) {
+Command::Command(const Command &c) {
     persistent = c.persistent;
     cmdPointer = c.cmdPointer;
     if (!persistent) cmdPointer = cmd_copy(c.cmdPointer);
 }
 
-Command::Command(Command&& c) {
-    persistent   = c.persistent;
-    cmdPointer   = c.cmdPointer;
+Command::Command(Command &&c) {
+    persistent = c.persistent;
+    cmdPointer = c.cmdPointer;
     c.cmdPointer = NULL;
 }
 
@@ -31,7 +31,7 @@ Command::~Command() {
     if (!persistent) cmd_destroy(cmdPointer);
 }
 
-Command& Command::operator=(const Command& c) {
+Command &Command::operator=(const Command &c) {
     persistent = c.persistent;
     cmdPointer = c.cmdPointer;
     if (!persistent) cmdPointer = cmd_copy(c.cmdPointer);
@@ -39,25 +39,19 @@ Command& Command::operator=(const Command& c) {
     return *this;
 }
 
-Command& Command::operator=(Command&& c) {
-    persistent   = c.persistent;
-    cmdPointer   = c.cmdPointer;
+Command &Command::operator=(Command &&c) {
+    persistent = c.persistent;
+    cmdPointer = c.cmdPointer;
     c.cmdPointer = NULL;
 
     return *this;
 }
 
-bool Command::operator==(const Command& c) const {
-    return equals(c);
-}
+bool Command::operator==(const Command &c) const { return equals(c); }
 
-bool Command::operator!=(const Command& c) const {
-    return !equals(c);
-}
+bool Command::operator!=(const Command &c) const { return !equals(c); }
 
-Command::operator bool() const {
-    return cmdPointer;
-}
+Command::operator bool() const { return cmdPointer; }
 
 bool Command::setCaseSensetive(bool caseSensetive) {
     if (cmdPointer) {
@@ -67,11 +61,9 @@ bool Command::setCaseSensetive(bool caseSensetive) {
     return false;
 }
 
-bool Command::setCaseSensitive(bool caseSensitive) {
-    return setCaseSensetive(caseSensitive);
-}
+bool Command::setCaseSensitive(bool caseSensitive) { return setCaseSensetive(caseSensitive); }
 
-bool Command::setCallback(void (* callback)(cmd* c)) {
+bool Command::setCallback(uint32_t (*callback)(cmd *c)) {
     if (cmdPointer && callback) {
         cmdPointer->callback = callback;
         return true;
@@ -79,9 +71,7 @@ bool Command::setCallback(void (* callback)(cmd* c)) {
     return false;
 }
 
-void Command::setDescription(const char* description) {
-    cmd_set_description(cmdPointer, description);
-}
+void Command::setDescription(const char *description) { cmd_set_description(cmdPointer, description); }
 
 bool Command::setComposite(bool composite) {
     if (cmdPointer) {
@@ -91,9 +81,9 @@ bool Command::setComposite(bool composite) {
     return false;
 }
 
-Argument Command::addArg(const char* name, const char* defaultValue) {
+Argument Command::addArg(const char *name, const char *defaultValue) {
     if (cmdPointer && (cmdPointer->mode == CMD_DEFAULT)) {
-        arg* a = arg_create_opt(name, defaultValue);
+        arg *a = arg_create_opt(name, defaultValue);
 
         cmd_add_arg(cmdPointer, a);
         return Argument(a);
@@ -101,9 +91,9 @@ Argument Command::addArg(const char* name, const char* defaultValue) {
     return Argument();
 }
 
-Argument Command::addArg(const char* name) {
+Argument Command::addArg(const char *name) {
     if (cmdPointer && (cmdPointer->mode == CMD_DEFAULT)) {
-        arg* a = arg_create_req(name);
+        arg *a = arg_create_req(name);
 
         cmd_add_arg(cmdPointer, a);
         return Argument(a);
@@ -111,9 +101,9 @@ Argument Command::addArg(const char* name) {
     return Argument();
 }
 
-Argument Command::addPosArg(const char* name, const char* defaultValue) {
+Argument Command::addPosArg(const char *name, const char *defaultValue) {
     if (cmdPointer && (cmdPointer->mode == CMD_DEFAULT)) {
-        arg* a = arg_create_opt_positional(name, defaultValue);
+        arg *a = arg_create_opt_positional(name, defaultValue);
 
         cmd_add_arg(cmdPointer, a);
         return Argument(a);
@@ -121,9 +111,9 @@ Argument Command::addPosArg(const char* name, const char* defaultValue) {
     return Argument();
 }
 
-Argument Command::addPosArg(const char* name) {
+Argument Command::addPosArg(const char *name) {
     if (cmdPointer && (cmdPointer->mode == CMD_DEFAULT)) {
-        arg* a = arg_create_req_positional(name);
+        arg *a = arg_create_req_positional(name);
 
         cmd_add_arg(cmdPointer, a);
         return Argument(a);
@@ -131,9 +121,9 @@ Argument Command::addPosArg(const char* name) {
     return Argument();
 }
 
-Argument Command::addFlagArg(const char* name, const char* defaultValue) {
+Argument Command::addFlagArg(const char *name, const char *defaultValue) {
     if (cmdPointer && (cmdPointer->mode == CMD_DEFAULT)) {
-        arg* a = arg_create_flag(name, defaultValue);
+        arg *a = arg_create_flag(name, defaultValue);
 
         cmd_add_arg(cmdPointer, a);
         return Argument(a);
@@ -141,44 +131,38 @@ Argument Command::addFlagArg(const char* name, const char* defaultValue) {
     return Argument();
 }
 
-Argument Command::addArgument(const char* name, const char* defaultValue) {
+Argument Command::addArgument(const char *name, const char *defaultValue) {
     return addArg(name, defaultValue);
 }
 
-Argument Command::addArgument(const char* name) {
-    return addArg(name);
-}
+Argument Command::addArgument(const char *name) { return addArg(name); }
 
-Argument Command::addPositionalArgument(const char* name, const char* defaultValue) {
+Argument Command::addPositionalArgument(const char *name, const char *defaultValue) {
     return addPosArg(name, defaultValue);
 }
 
-Argument Command::addPositionalArgument(const char* name) {
-    return addPosArg(name);
-}
+Argument Command::addPositionalArgument(const char *name) { return addPosArg(name); }
 
-Argument Command::addFlagArgument(const char* name, const char* defaultValue) {
+Argument Command::addFlagArgument(const char *name, const char *defaultValue) {
     return addFlagArg(name, defaultValue);
 }
 
-bool Command::equals(String name) const {
-    return equals(name.c_str());
-}
+bool Command::equals(String name) const { return equals(name.c_str()); }
 
-bool Command::equals(const char* name) const {
-    if (cmdPointer && name) return cmd_name_equals(cmdPointer, name, strlen(name), cmdPointer->case_sensetive) == CMD_NAME_EQUALS;
+bool Command::equals(const char *name) const {
+    if (cmdPointer && name)
+        return cmd_name_equals(cmdPointer, name, strlen(name), cmdPointer->case_sensetive) == CMD_NAME_EQUALS;
     return false;
 }
 
-bool Command::equals(const Command& c) const {
-    if (cmdPointer && c.cmdPointer) return cmd_equals(cmdPointer, c.cmdPointer, cmdPointer->case_sensetive) == CMD_NAME_EQUALS;
+bool Command::equals(const Command &c) const {
+    if (cmdPointer && c.cmdPointer)
+        return cmd_equals(cmdPointer, c.cmdPointer, cmdPointer->case_sensetive) == CMD_NAME_EQUALS;
     return false;
 }
 
 String Command::getName() const {
-    if (cmdPointer) {
-        return String(cmdPointer->name);
-    }
+    if (cmdPointer) { return String(cmdPointer->name); }
     return String();
 }
 
@@ -186,7 +170,7 @@ int Command::countArgs() const {
     int i = 0;
 
     if (cmdPointer) {
-        arg* h = cmdPointer->arg_list;
+        arg *h = cmdPointer->arg_list;
 
         while (h) {
             ++i;
@@ -199,8 +183,8 @@ int Command::countArgs() const {
 Argument Command::getArgument(int i) const {
     if (!cmdPointer) return Argument();
 
-    arg* h = cmdPointer->arg_list;
-    int  j = 0;
+    arg *h = cmdPointer->arg_list;
+    int j = 0;
 
     while (j < i && h) {
         h = h->next;
@@ -210,11 +194,11 @@ Argument Command::getArgument(int i) const {
     return Argument(j == i ? h : NULL);
 }
 
-Argument Command::getArgument(const char* name) const {
+Argument Command::getArgument(const char *name) const {
     if (!cmdPointer || !name) return Argument();
 
-    arg* h = cmdPointer->arg_list;
-    int  j = 0;
+    arg *h = cmdPointer->arg_list;
+    int j = 0;
 
     while (h) {
         if (arg_name_equals(h, name, strlen(name), cmdPointer->case_sensetive) == ARG_NAME_EQUALS) return h;
@@ -225,29 +209,19 @@ Argument Command::getArgument(const char* name) const {
     return Argument();
 }
 
-Argument Command::getArgument(String name) const {
-    return getArgument(name.c_str());
-}
+Argument Command::getArgument(String name) const { return getArgument(name.c_str()); }
 
-Argument Command::getArgument(const Argument& a) const {
+Argument Command::getArgument(const Argument &a) const {
     return getArgument(a.argPointer ? a.argPointer->name : NULL);
 }
 
-Argument Command::getArg(int i) const {
-    return getArgument(i);
-}
+Argument Command::getArg(int i) const { return getArgument(i); }
 
-Argument Command::getArg(const char* name) const {
-    return getArgument(name);
-}
+Argument Command::getArg(const char *name) const { return getArgument(name); }
 
-Argument Command::getArg(String name) const {
-    return getArgument(name);
-}
+Argument Command::getArg(String name) const { return getArgument(name); }
 
-Argument Command::getArg(const Argument& a) const {
-    return getArgument(a);
-}
+Argument Command::getArg(const Argument &a) const { return getArgument(a); }
 
 String Command::toString(bool description) const {
     String s;
@@ -259,26 +233,19 @@ String Command::toString(bool description) const {
 CommandType Command::getType() const {
     if (cmdPointer) {
         switch (cmdPointer->mode) {
-            case CMD_DEFAULT:
-                return CommandType::NORMAL;
-            case CMD_BOUNDLESS:
-                return CommandType::BOUNDLESS;
-            case CMD_SINGLE:
-                return CommandType::SINGLE;
+            case CMD_DEFAULT: return CommandType::NORMAL;
+            case CMD_BOUNDLESS: return CommandType::BOUNDLESS;
+            case CMD_SINGLE: return CommandType::SINGLE;
         }
     }
     return CommandType::NORMAL;
 }
 
-bool Command::hasDescription() const {
-    return cmdPointer && cmdPointer->description;
-}
+bool Command::hasDescription() const { return cmdPointer && cmdPointer->description; }
 
-String Command::getDescription() const {
-    return String(cmd_get_description(cmdPointer));
-}
+String Command::getDescription() const { return String(cmd_get_description(cmdPointer)); }
 
-void Command::toString(String& s, bool description) const {
+void Command::toString(String &s, bool description) const {
     if (cmdPointer) {
         s += String(cmdPointer->name);
 
@@ -291,8 +258,8 @@ void Command::toString(String& s, bool description) const {
         } else if (cmdPointer->mode == CMD_SINGLE) {
             s += ' ';
             s += "<...>";
-        } else  {
-            arg* h = cmdPointer->arg_list;
+        } else {
+            arg *h = cmdPointer->arg_list;
 
             while (h) {
                 s += ' ';
@@ -302,27 +269,24 @@ void Command::toString(String& s, bool description) const {
             }
         }
 
-        if (description && hasDescription()) {
-            s += "\r\n" + getDescription();
-        }
+        if (description && hasDescription()) { s += "\r\n" + getDescription(); }
     }
 }
 
-void Command::run() const {
-    if (cmdPointer && cmdPointer->callback) cmdPointer->callback(cmdPointer);
+bool Command::run() const {
+    if (cmdPointer && cmdPointer->callback) return cmdPointer->callback(cmdPointer);
+    return false;
 }
 
-cmd* Command::getPtr() {
-    return cmdPointer;
-}
+cmd *Command::getPtr() { return cmdPointer; }
 
-void Command::addCmd(Command& c) {
+void Command::addCmd(Command &c) {
     if (!cmdPointer || !cmdPointer->composite) return;
 
     if (!cmdPointer->cmd_list) {
         cmdPointer->cmd_list = c.cmdPointer;
     } else {
-        cmd* h = cmdPointer->cmd_list;
+        cmd *h = cmdPointer->cmd_list;
 
         while (h->next) h = h->next;
         h->next = c.cmdPointer;
@@ -332,7 +296,7 @@ void Command::addCmd(Command& c) {
     c.persistent = true;
 }
 
-Command Command::addCmd(const char* name, void (* callback)(cmd* c)) {
+Command Command::addCmd(const char *name, uint32_t (*callback)(cmd *c)) {
     Command c(cmd_create_default(name));
 
     c.setCallback(callback);
@@ -341,7 +305,7 @@ Command Command::addCmd(const char* name, void (* callback)(cmd* c)) {
     return c;
 }
 
-Command Command::addBoundlessCmd(const char* name, void (* callback)(cmd* c)) {
+Command Command::addBoundlessCmd(const char *name, uint32_t (*callback)(cmd *c)) {
     Command c(cmd_create_boundless(name));
 
     c.setCallback(callback);
@@ -350,7 +314,7 @@ Command Command::addBoundlessCmd(const char* name, void (* callback)(cmd* c)) {
     return c;
 }
 
-Command Command::addSingleArgCmd(const char* name, void (* callback)(cmd* c)) {
+Command Command::addSingleArgCmd(const char *name, uint32_t (*callback)(cmd *c)) {
     Command c(cmd_create_single(name));
 
     c.setCallback(callback);
@@ -359,7 +323,7 @@ Command Command::addSingleArgCmd(const char* name, void (* callback)(cmd* c)) {
     return c;
 }
 
-Command Command::addCompositeCmd(const char* name, void (* callback)(cmd* c)) {
+Command Command::addCompositeCmd(const char *name, uint32_t (*callback)(cmd *c)) {
     Command c(cmd_create_boundless(name));
 
     c.setComposite(true);
@@ -369,18 +333,16 @@ Command Command::addCompositeCmd(const char* name, void (* callback)(cmd* c)) {
     return c;
 }
 
-Command Command::addCommand(const char* name, void (* callback)(cmd* c)) {
-    return addCmd(name, callback);
-}
+Command Command::addCommand(const char *name, uint32_t (*callback)(cmd *c)) { return addCmd(name, callback); }
 
-Command Command::addBoundlessCommand(const char* name, void (* callback)(cmd* c)) {
+Command Command::addBoundlessCommand(const char *name, uint32_t (*callback)(cmd *c)) {
     return addBoundlessCmd(name, callback);
 }
 
-Command Command::addSingleArgumentCommand(const char* name, void (* callback)(cmd* c)) {
+Command Command::addSingleArgumentCommand(const char *name, uint32_t (*callback)(cmd *c)) {
     return addSingleArgCmd(name, callback);
 }
 
-Command Command::addCompositeCommand(const char* name, void (* callback)(cmd* c)) {
+Command Command::addCompositeCommand(const char *name, uint32_t (*callback)(cmd *c)) {
     return addCompositeCmd(name, callback);
 }
