@@ -61,6 +61,10 @@ cmd_error* cmd_error_create_unclosed_quote(cmd* c, arg* a, word_node* arg_value)
     return cmd_error_create(CMD_UNCLOSED_QUOTE, c, a, arg_value);
 }
 
+cmd_error* cmd_error_create_callback_failure(cmd* c) {
+    return cmd_error_create(CMD_CALLBACK_FAILURE, c, NULL, NULL);
+}
+
 // Copy Constructors
 cmd_error* cmd_error_copy(cmd_error* e) {
     if (!e) return NULL;

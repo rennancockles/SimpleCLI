@@ -1,7 +1,7 @@
 /*
-   Copyright (c) 2019 Stefan Kremser
+   Copyright (c) 2025 Rennan COckles
    This software is licensed under the MIT License. See the license file for details.
-   Source: github.com/spacehuhn/SimpleCLI
+   Source: github.com/rennancockles/SimpleCLI
  */
 
 // Include Library
@@ -11,32 +11,31 @@
 SimpleCLI cli;
 
 // Commands
-Command sum;
+Command screen;
+Command color;
+Command brightness;
 
-// Callback function for sum command
-uint32_t sumCallback(cmd *c) {
+// Callback function for color subcommand
+uint32_t colorCallback(cmd *c) {
     Command cmd(c); // Create wrapper object
 
-    int argNum = cmd.countArgs(); // Get number of arguments
-    int sum = 0;
-
-    // Go through all arguments and add their value up
-    for (int i = 0; i < argNum; i++) {
-        Argument arg = cmd.getArg(i);
-        String argValue = arg.getValue();
-        int argIntValue = argValue.toInt();
-
-        if (argIntValue > 0) {
-            if (i > 0) Serial.print('+');
-            Serial.print(argIntValue);
-
-            sum += argIntValue;
-        }
-    }
+    Argument arg = cmd.getArgument("color");
+    String color = arg.getValue();
 
     // Print result
-    Serial.print(" = ");
-    Serial.println(sum);
+    Serial.println("Setting screen color to " + color);
+    return true;
+}
+
+// Callback function for brightness subcommand
+uint32_t brightnessCallback(cmd *c) {
+    Command cmd(c); // Create wrapper object
+
+    Argument arg = cmd.getArgument("value");
+    String value = arg.getValue();
+
+    // Print result
+    Serial.println("Setting screen brightness to " + value + "%");
     return true;
 }
 
@@ -62,12 +61,20 @@ void setup() {
 
     cli.setOnError(errorCallback); // Set error Callback
 
-    // Create the sum command, accepting infinite number of arguments
-    // Each argument is seperated by a space
-    // For example: sum 1 2 3
-    sum = cli.addBoundlessCommand("sum", sumCallback);
+    // Create the screen command
+    screen = cli.addBoundlessCommand("screen");
 
-    Serial.println("Type: sum 1 2 3");
+    // Create the color subcommand
+    // For example: screen color ffffff
+    color = cli.addBoundlessCommand("col/or", colorCallback);
+    color.addPosArg("color");
+
+    // Create the color subcommand
+    // For example: screen br 75
+    brightness = cli.addBoundlessCommand("br/ight/ness", brightnessCallback);
+    brightness.addPosArg("value");
+
+    Serial.println("Type: screen color ffffff");
 }
 
 void loop() {

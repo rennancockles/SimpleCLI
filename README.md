@@ -21,32 +21,29 @@ A list of projects that make use of this library:
 
 ## Overview
 
-- [SimpleCLI](#simplecli)
-  - [Projects](#projects)
-  - [Overview](#overview)
-  - [About](#about)
-  - [Supported Devices](#supported-devices)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Examples](#examples)
-    - [Include Library](#include-library)
-    - [Create SimpleCLI instance](#create-simplecli-instance)
-    - [Adding Commands](#adding-commands)
-    - [Adding Commands with callback](#adding-commands-with-callback)
-    - [Adding Arguments](#adding-arguments)
-    - [Templates](#templates)
-    - [Parsing Input](#parsing-input)
-    - [Reacting on Commands](#reacting-on-commands)
-    - [Reacting on Errors](#reacting-on-errors)
-  - [Classes \& Methods](#classes--methods)
-    - [SimpleCLI](#simplecli-1)
-    - [CommandType](#commandtype)
-    - [Command](#command)
-    - [CommandErrorType](#commanderrortype)
-    - [CommandError](#commanderror)
-    - [ArgumentType](#argumenttype)
-    - [Argument](#argument)
-  - [License](#license)
+- [About](#about)
+- [Supported Devices](#supported-devices)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Examples](#examples)
+  - [Include Library](#include-library)
+  - [Create SimpleCLI instance](#create-simplecli-instance)
+  - [Adding Commands](#adding-commands)
+  - [Adding Commands with callback](#adding-commands-with-callback)
+  - [Adding Arguments](#adding-arguments)
+  - [Templates](#templates)
+  - [Parsing Input](#parsing-input)
+  - [Reacting on Commands](#reacting-on-commands)
+  - [Reacting on Errors](#reacting-on-errors)
+- [Classes & Methods](#classes--methods)
+  - [SimpleCLI](#simplecli)
+  - [CommandType](#commandtype)
+  - [Command](#command)
+  - [CommandErrorType](#commanderrortype)
+  - [CommandError](#commanderror)
+  - [ArgumentType](#argumenttype)
+  - [Argument](#argument)
+- [License](#license)
 
 ## About
 The goal of this library is to control your Arduino projects using commands similar to the Linux CLI.
@@ -127,6 +124,14 @@ Command mySingleArgCmd = cli.addSingleArgCmd("mySingleArgCmdName");
 // => "1", "2", "3" will the argument values
 Command myBoundlessCommand = cli.addBoundlessCommand("myBoundlessCommandName");
 Command myBoundlessCmd = cli.addBoundlessCmd("myBoundlessCmdName");
+
+// Composite-Command that accepts sub commands
+// For example: screen color red
+//              screen brightness 75
+Command myCompositeCommand = cli.addCompositeCommand("myCompositeCommandName");
+Command mySubCommand = myCompositeCommand.addCommand("mySubCommandName");
+Command myCompositeCmd = cli.addCompositeCmd("myCompositeCmdName");
+Command mySubCmd = myCompositeCmd.addCmd("mySubCmdName");
 ```
 
 ### Adding Commands with callback
@@ -145,11 +150,15 @@ Now you can create a command and pass it the function pointer:
 Command myCommand = cli.addCommand("myCommandName", myCallback);
 Command myCommand = cli.addBoundlessCommand("myCommandName", myCallback);
 Command myCommand = cli.addSingleArgumentCommand("myCommandName", myCallback);
+Command myCommand = cli.adCompositeCommand("myCommandName", myCallback);
 
 Command myCommand = cli.addCmd("myCommandName", myCallback);
 Command myCommand = cli.addBoundlessCmd("myCommandName", myCallback);
 Command myCommand = cli.addSingleArgCmd("myCommandName", myCallback);
+Command myCommand = cli.addCompositeCmd("myCommandName", myCallback);
 ```
+
+> Note that callbacks for composite command will execute after each subcommand's callback
 
 ### Adding Arguments
 
@@ -214,15 +223,15 @@ Here are some examples:
 
 ```c++
 // Inline
-cli.parse("myCommand");
+bool success = cli.parse("myCommand");
 
 // From string
 String input = "myCommand";
-cli.parse(input);
+bool success = cli.parse(input);
 
 // From serial
 String input = Serial.readString();
-cli.parse(input);
+bool success = cli.parse(input);
 ```
 
 ### Reacting on Commands
@@ -299,9 +308,9 @@ SimpleCLI(int commandQueueSize = 10, int errorQueueSize = 10);
 void pause();
 void unpause();
 
-void parse(String& input);
-void parse(const char* input);
-void parse(const char* input, size_t input_len);
+bool parse(String& input);
+bool parse(const char* input);
+bool parse(const char* input, size_t input_len);
 
 bool available() const;
 bool errored() const;
@@ -320,18 +329,19 @@ Command getCommand(const char* name);
 
 CommandError getError();
 
-Command addCmd(const char* name, void (* callback)(cmd* c)          = NULL);
-Command addBoundlessCmd(const char* name, void (* callback)(cmd* c) = NULL);
-Command addSingleArgCmd(const char* name, void (* callback)(cmd* c) = NULL);
+Command addCmd(const char* name, uint32_t (* callback)(cmd* c)          = NULL);
+Command addBoundlessCmd(const char* name, uint32_t (* callback)(cmd* c) = NULL);
+Command addSingleArgCmd(const char* name, uint32_t (* callback)(cmd* c) = NULL);
 
-Command addCommand(const char* name, void (* callback)(cmd* c)               = NULL);
-Command addBoundlessCommand(const char* name, void (* callback)(cmd* c)      = NULL);
-Command addSingleArgumentCommand(const char* name, void (* callback)(cmd* c) = NULL);
+Command addCommand(const char* name, uint32_t (* callback)(cmd* c)               = NULL);
+Command addBoundlessCommand(const char* name, uint32_t (* callback)(cmd* c)      = NULL);
+Command addSingleArgumentCommand(const char* name, uint32_t (* callback)(cmd* c) = NULL);
 
 String toString(bool descriptions          = true) const;
 void toString(String& s, bool descriptions = true) const;
 
 void setCaseSensetive(bool caseSensetive = true);
+void setCallbackFailureAsError(bool value = true);
 void setOnError(void (* onError)(cmd_error* e));
 ```
 
@@ -357,7 +367,7 @@ bool operator!=(const Command& c) const;
 operator bool() const;
 
 bool setCaseSensetive(bool caseSensetive = true);
-bool setCallback(void (* callback)(cmd* c));
+bool setCallback(uint32_t (* callback)(cmd* c));
 
 void setDescription(const char* description);
 
@@ -401,14 +411,33 @@ void toString(String& s, bool description = true) const;
 void run() const;
 
 cmd* getPtr();
+
+Command addCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+Command addBoundlessCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+Command addSingleArgCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+Command addCompositeCmd(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+
+Command addCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+Command addBoundlessCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+Command addSingleArgumentCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
+Command addCompositeCommand(const char *name, uint32_t (*callback)(cmd *c) = NULL);
 ```
 
 ### CommandErrorType
 
 ```c++
-enum class CommandErrorType { NULL_POINTER, EMPTY_LINE, PARSE_SUCCESSFUL,
-                              COMMAND_NOT_FOUND, UNKNOWN_ARGUMENT, MISSING_ARGUMENT,
-                              MISSING_ARGUMENT_VALUE, UNCLOSED_QUOTE, MISSING_SUB_COMMAND };
+enum class CommandErrorType {
+    NULL_POINTER,
+    EMPTY_LINE,
+    PARSE_SUCCESSFUL,
+    COMMAND_NOT_FOUND,
+    UNKNOWN_ARGUMENT,
+    MISSING_ARGUMENT,
+    MISSING_ARGUMENT_VALUE,
+    UNCLOSED_QUOTE,
+    MISSING_SUB_COMMAND,
+    CALLBACK_FAILURE
+};
 ```
 
 ### CommandError

@@ -74,7 +74,8 @@ bool SimpleCLI::parse(const char *str, size_t len, cmd *commands) {
         else h = cmdList;
         bool success = false;
         bool errored = false;
-        bool callbackSuccess = false;
+        bool callbackSuccess = true;
+        bool compositeSuccess = true;
 
         while (h && !success && !errored) {
             cmd_error *e = cmd_parse(h, n);
@@ -82,7 +83,8 @@ bool SimpleCLI::parse(const char *str, size_t len, cmd *commands) {
             // When parsing was successful
             if (e->mode == CMD_PARSE_SUCCESS) {
                 if (h->composite) {
-                    parse(n->words->first->next->str, n->len - n->words->first->len - 1, h->cmd_list);
+                    compositeSuccess =
+                        parse(n->words->first->next->str, n->len - n->words->first->len - 1, h->cmd_list);
                 }
 
                 if (h->callback && !pauseParsing) callbackSuccess = h->callback(h);
@@ -130,7 +132,22 @@ bool SimpleCLI::parse(const char *str, size_t len, cmd *commands) {
             errored = true;
         }
 
-        if (errored || !callbackSuccess) anyError = true;
+        // Failed executing callback
+        if (callbackFailureAsError && !callbackSuccess) {
+            cmd_error *e = cmd_error_create_callback_failure(h);
+
+            if (onError && !pauseParsing) {
+                onError(e);
+            } else {
+                errorQueue = cmd_error_push(errorQueue, cmd_error_copy(e), errorQueueSize);
+            }
+
+            cmd_error_destroy(e);
+
+            errored = true;
+        }
+
+        if (errored || !callbackSuccess || !compositeSuccess) anyError = true;
 
         n = n->next;
     }
@@ -321,6 +338,8 @@ void SimpleCLI::setCaseSensetive(bool caseSensetive) {
 }
 
 void SimpleCLI::setCaseSensitive(bool caseSensitive) { setCaseSensetive(caseSensitive); }
+
+void SimpleCLI::setCallbackFailureAsError(bool value) { this->callbackFailureAsError = value; }
 
 void SimpleCLI::setOnError(void (*onError)(cmd_error *e)) { this->onError = onError; }
 

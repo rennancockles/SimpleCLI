@@ -10,19 +10,19 @@ extern "C" {
 #include "c/arg.h"
 }
 
-Argument::Argument(arg* argPointer, bool persistent) : argPointer(argPointer), persistent(persistent) {
+Argument::Argument(arg *argPointer, bool persistent) : argPointer(argPointer), persistent(persistent) {
     if (!persistent) argPointer = arg_copy(argPointer);
 }
 
-Argument::Argument(const Argument& a) {
+Argument::Argument(const Argument &a) {
     argPointer = a.argPointer;
     persistent = a.persistent;
     if (!persistent) argPointer = arg_copy(argPointer);
 }
 
-Argument::Argument(Argument&& a) {
-    argPointer   = a.argPointer;
-    persistent   = a.persistent;
+Argument::Argument(Argument &&a) {
+    argPointer = a.argPointer;
+    persistent = a.persistent;
     a.argPointer = NULL;
 }
 
@@ -30,7 +30,7 @@ Argument::~Argument() {
     if (!persistent) arg_destroy(argPointer);
 }
 
-Argument& Argument::operator=(const Argument& a) {
+Argument &Argument::operator=(const Argument &a) {
     argPointer = a.argPointer;
     persistent = a.persistent;
     if (!persistent) argPointer = arg_copy(argPointer);
@@ -38,49 +38,31 @@ Argument& Argument::operator=(const Argument& a) {
     return *this;
 }
 
-Argument& Argument::operator=(Argument&& a) {
-    argPointer   = a.argPointer;
-    persistent   = a.persistent;
+Argument &Argument::operator=(Argument &&a) {
+    argPointer = a.argPointer;
+    persistent = a.persistent;
     a.argPointer = NULL;
 
     return *this;
 }
 
-bool Argument::operator==(const Argument& a) const {
-    return equals(a);
-}
+bool Argument::operator==(const Argument &a) const { return equals(a); }
 
-bool Argument::operator!=(const Argument& a) const {
-    return !equals(a);
-}
+bool Argument::operator!=(const Argument &a) const { return !equals(a); }
 
-Argument::operator bool() const {
-    return argPointer;
-}
+Argument::operator bool() const { return argPointer; }
 
-bool Argument::isSet() const {
-    return argPointer && argPointer->set == ARG_SET;
-}
+bool Argument::isSet() const { return argPointer && argPointer->set == ARG_SET; }
 
-bool Argument::isRequired() const {
-    return argPointer && argPointer->req == ARG_REQ;
-}
+bool Argument::isRequired() const { return argPointer && argPointer->req == ARG_REQ; }
 
-bool Argument::isOptional() const {
-    return !isRequired();
-}
+bool Argument::isOptional() const { return !isRequired(); }
 
-bool Argument::hasDefaultValue() const {
-    return isOptional();
-}
+bool Argument::hasDefaultValue() const { return isOptional(); }
 
-bool Argument::isReq() const {
-    return isRequired();
-}
+bool Argument::isReq() const { return isRequired(); }
 
-bool Argument::isOpt() const {
-    return isOptional();
-}
+bool Argument::isOpt() const { return isOptional(); }
 
 String Argument::getName() const {
     if (argPointer) return String(argPointer->name);
@@ -108,7 +90,7 @@ String Argument::toString() const {
     return s;
 }
 
-void Argument::toString(String& s) const {
+void Argument::toString(String &s) const {
     if (isOptional()) s += '[';
 
     String n = getName();
@@ -134,18 +116,14 @@ void Argument::toString(String& s) const {
     if (isOptional()) s += ']';
 }
 
-bool Argument::equals(String name, bool caseSensetive) const {
-    return equals(name.c_str(), caseSensetive);
-}
+bool Argument::equals(String name, bool caseSensetive) const { return equals(name.c_str(), caseSensetive); }
 
-bool Argument::equals(const char* name, bool caseSensetive) const {
+bool Argument::equals(const char *name, bool caseSensetive) const {
     return argPointer && name && arg_name_equals(argPointer, name, strlen(name), caseSensetive);
 }
 
-bool Argument::equals(const Argument& a, bool caseSensetive) const {
+bool Argument::equals(const Argument &a, bool caseSensetive) const {
     return argPointer && a.argPointer && arg_equals(argPointer, a.argPointer, caseSensetive);
 }
 
-arg* Argument::getPtr() {
-    return argPointer;
-}
+arg *Argument::getPtr() { return argPointer; }

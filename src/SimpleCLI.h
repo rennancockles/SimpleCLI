@@ -18,6 +18,7 @@ class SimpleCLI {
 private:
     bool caseSensetive{false};
     bool pauseParsing{false};
+    bool callbackFailureAsError{false};
 
     cmd *cmdList{NULL};          // List of accessible commands
     cmd *cmdQueue{NULL};         // Queue with parsed commands the user has typed in
@@ -76,6 +77,7 @@ public:
 
     void setCaseSensetive(bool caseSensetive = true);
     void setCaseSensitive(bool caseSensitive = true);
+    void setCallbackFailureAsError(bool value = true);
     void setOnError(void (*onError)(cmd_error *e));
     void setErrorCallback(void (*onError)(cmd_error *e));
 };

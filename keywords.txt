@@ -29,12 +29,15 @@ getError	KEYWORD2
 addCmd	KEYWORD2
 addBoundlessCmd	KEYWORD2
 addSingleArgCmd	KEYWORD2
+addCompositeCmd	KEYWORD2
 addCommand	KEYWORD2
 addBoundlessCommand	KEYWORD2
 addSingleArgumentCommand	KEYWORD2
+addCompositeCommand	KEYWORD2
 toString	KEYWORD2
 setCaseSensetive	KEYWORD2
 setCaseSensitive    KEYWORD2
+setCallbackFailureAsError    KEYWORD2
 setOnError	KEYWORD2
 
 # CommandError
@@ -98,6 +101,7 @@ MISSING_ARGUMENT	LITERAL1
 MISSING_ARGUMENT_VALUE	LITERAL1
 UNCLOSED_QUOTE	LITERAL1
 MISSING_SUB_COMMAND	LITERAL1
+CALLBACK_FAILURE	LITERAL1
 
 # Argument
 POSITIONAL	LITERAL1
