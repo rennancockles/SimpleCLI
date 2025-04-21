@@ -65,7 +65,7 @@ bool Command::setCaseSensitive(bool caseSensitive) { return setCaseSensetive(cas
 
 bool Command::setCallback(uint32_t (*callback)(cmd *c)) {
     if (cmdPointer && callback) {
-        cmdPointer->callback = callback;
+        cmdPointer->callback = reinterpret_cast<unsigned int (*)(cmd*)>(callback);
         return true;
     }
     return false;
